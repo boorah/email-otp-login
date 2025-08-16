@@ -75,6 +75,16 @@ func RegisterRoutes(r chi.Router) chi.Router {
 			return
 		}
 
+		// Send the OTP to the user's email
+		err = helper.SendOTPEmail(payload.Email, "OTP for Login", "123456")
+		if err != nil {
+			log.Println("error while sending email:", err)
+
+			helper.RespondWithError(w, helper.NewInternalServerError("An internal error occurred"))
+
+			return
+		}
+
 		helper.RespondWithJSON(w, http.StatusOK, map[string]string{
 			"message": "OTP generated",
 		})

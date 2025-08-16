@@ -7,17 +7,22 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/joho/godotenv"
 
+	"boorah/email-otp-login-backend/config"
 	"boorah/email-otp-login-backend/db"
+	"boorah/email-otp-login-backend/helper"
 	v1 "boorah/email-otp-login-backend/v1"
 )
 
 func main() {
-	// Load environment variables
-	if err := godotenv.Load(); err != nil {
-		panic(fmt.Sprintf("error loading .env file: %v", err))
+	// Load all environment variables
+	_, err := config.LoadConfig()
+	if err != nil {
+		panic(err)
 	}
+
+	// Initialize the email client
+	helper.InitEmailClient()
 
 	// Connect to the database
 	ctx := context.Background()
@@ -35,9 +40,9 @@ func main() {
 		w.Write([]byte(`{"message": "pong"}`))
 	})
 
-	log.Println("Server running on http://localhost:8080")
-
 	r.Mount("/api/v1", v1.RegisterRoutes(r))
+
+	log.Println("Server running on http://localhost:8080")
 
 	http.ListenAndServe(":8080", r)
 
