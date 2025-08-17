@@ -5,6 +5,10 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 
@@ -44,9 +48,31 @@ func main() {
 
 	log.Println("Server running on http://localhost:8080")
 
-	err = http.ListenAndServe(fmt.Sprintf("localhost:%d", config.ConfigData.PORT), r)
-	if err != nil {
-		log.Fatalf("error starting server: %v", err)
+	server := &http.Server{
+		Addr:    fmt.Sprintf("localhost:%d", config.ConfigData.PORT),
+		Handler: r,
 	}
 
+	go func() {
+		log.Printf("Starting server on port %d\n", config.ConfigData.PORT)
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("could not start server: %s\n", err)
+		}
+	}()
+
+	// Graceful shutdown
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+
+	<-quit
+	log.Println("Shutting down server...")
+
+	timeoutCtx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+	defer cancel()
+
+	if err := server.Shutdown(timeoutCtx); err != nil {
+		log.Fatalf("Server forced to shutdown: %s", err)
+	}
+
+	log.Println("Server exited gracefully")
 }
