@@ -13,5 +13,6 @@ CREATE TABLE users_otps (
     id UUID PRIMARY KEY,
     user_id UUID NOT NULL REFERENCES users(id),
     otp VARCHAR(6) NOT NULL,
-    expires_at TIMESTAMP WITH TIME ZONE NOT NULL
+    expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    used_at TIMESTAMP WITH TIME ZONE
 );

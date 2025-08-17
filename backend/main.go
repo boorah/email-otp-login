@@ -10,7 +10,7 @@ import (
 
 	"boorah/email-otp-login-backend/config"
 	"boorah/email-otp-login-backend/db"
-	"boorah/email-otp-login-backend/helper"
+	helpers "boorah/email-otp-login-backend/helpers"
 	v1 "boorah/email-otp-login-backend/v1"
 )
 
@@ -22,16 +22,16 @@ func main() {
 	}
 
 	// Initialize the email client
-	helper.InitEmailClient()
+	helpers.InitEmailClient()
 
 	// Connect to the database
 	ctx := context.Background()
-	conn, err := db.Connect(ctx)
+	pool, err := db.Connect(ctx)
 	if err != nil {
 		panic(fmt.Sprintf("error connecting to database: %v", err))
 	}
 
-	defer conn.Close(ctx)
+	defer pool.Close()
 
 	r := chi.NewRouter()
 

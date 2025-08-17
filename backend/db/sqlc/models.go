@@ -2,7 +2,7 @@
 // versions:
 //   sqlc v1.27.0
 
-package db
+package sqlcConfig
 
 import (
 	"github.com/jackc/pgx/v5/pgtype"
@@ -24,4 +24,5 @@ type UsersOtp struct {
 	UserID    pgtype.UUID
 	Otp       string
 	ExpiresAt pgtype.Timestamptz
+	UsedAt    pgtype.Timestamptz
 }

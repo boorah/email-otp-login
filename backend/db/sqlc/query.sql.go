@@ -3,7 +3,7 @@
 //   sqlc v1.27.0
 // source: query.sql
 
-package db
+package sqlcConfig
 
 import (
 	"context"
@@ -38,6 +38,64 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 	return i, err
 }
 
+const createUserOTP = `-- name: CreateUserOTP :one
+INSERT INTO users_otps (
+  id, user_id, otp, expires_at
+) VALUES (
+  $1, $2, $3, $4
+)
+RETURNING created_at, updated_at, deleted_at, id, user_id, otp, expires_at, used_at
+`
+
+type CreateUserOTPParams struct {
+	ID        pgtype.UUID
+	UserID    pgtype.UUID
+	Otp       string
+	ExpiresAt pgtype.Timestamptz
+}
+
+func (q *Queries) CreateUserOTP(ctx context.Context, arg CreateUserOTPParams) (UsersOtp, error) {
+	row := q.db.QueryRow(ctx, createUserOTP,
+		arg.ID,
+		arg.UserID,
+		arg.Otp,
+		arg.ExpiresAt,
+	)
+	var i UsersOtp
+	err := row.Scan(
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+		&i.ID,
+		&i.UserID,
+		&i.Otp,
+		&i.ExpiresAt,
+		&i.UsedAt,
+	)
+	return i, err
+}
+
+const getLatestUserOTP = `-- name: GetLatestUserOTP :one
+SELECT created_at, updated_at, deleted_at, id, user_id, otp, expires_at, used_at FROM users_otps WHERE user_id = $1 AND used_at IS NULL 
+ORDER BY created_at DESC LIMIT 1
+`
+
+func (q *Queries) GetLatestUserOTP(ctx context.Context, userID pgtype.UUID) (UsersOtp, error) {
+	row := q.db.QueryRow(ctx, getLatestUserOTP, userID)
+	var i UsersOtp
+	err := row.Scan(
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+		&i.ID,
+		&i.UserID,
+		&i.Otp,
+		&i.ExpiresAt,
+		&i.UsedAt,
+	)
+	return i, err
+}
+
 const getUserByEmail = `-- name: GetUserByEmail :one
 SELECT id, created_at, updated_at, deleted_at, email FROM users WHERE email = $1
 `
@@ -53,4 +111,13 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 		&i.Email,
 	)
 	return i, err
+}
+
+const updateUserOTPUsedAt = `-- name: UpdateUserOTPUsedAt :exec
+UPDATE users_otps SET used_at = NOW() WHERE id = $1
+`
+
+func (q *Queries) UpdateUserOTPUsedAt(ctx context.Context, id pgtype.UUID) error {
+	_, err := q.db.Exec(ctx, updateUserOTPUsedAt, id)
+	return err
 }

@@ -1,4 +1,4 @@
-package helper
+package helpers
 
 import "net/http"
 
@@ -51,6 +51,34 @@ func NewInternalServerError(message string) InternalServerError {
 		BaseError: BaseError{
 			Type:       "internal_server_error",
 			StatusCode: http.StatusInternalServerError,
+			Message:    message,
+		},
+	}
+}
+
+type NotFoundError struct {
+	BaseError
+}
+
+func NewNotFoundError(message string) NotFoundError {
+	return NotFoundError{
+		BaseError: BaseError{
+			Type:       "not_found",
+			StatusCode: http.StatusNotFound,
+			Message:    message,
+		},
+	}
+}
+
+type UnauthorizedError struct {
+	BaseError
+}
+
+func NewUnauthorizedError(message string) UnauthorizedError {
+	return UnauthorizedError{
+		BaseError: BaseError{
+			Type:       "unauthorized",
+			StatusCode: http.StatusUnauthorized,
 			Message:    message,
 		},
 	}

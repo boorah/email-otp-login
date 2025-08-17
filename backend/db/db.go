@@ -4,25 +4,25 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 
 	"boorah/email-otp-login-backend/config"
-	db "boorah/email-otp-login-backend/db/sqlc"
+	sqlcConfig "boorah/email-otp-login-backend/db/sqlc"
 )
 
-var Queries *db.Queries
+var Queries *sqlcConfig.Queries
 
-func Connect(ctx context.Context) (*pgx.Conn, error) {
+func Connect(ctx context.Context) (*pgxpool.Pool, error) {
 	config := *config.ConfigData
 
-	connectionString := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s", config.USERNAME, config.PASSWORD, config.HOST, config.PORT, config.DBNAME, config.SSLMode)
+	connectionString := fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=%s", config.USERNAME, config.PASSWORD, config.HOST, config.PORT, config.DBNAME, config.SSLMode)
 
-	conn, err := pgx.Connect(ctx, connectionString)
+	pool, err := pgxpool.New(ctx, connectionString)
 	if err != nil {
 		return nil, fmt.Errorf("unable to connect to database: %v", err)
 	}
 
-	Queries = db.New(conn)
+	Queries = sqlcConfig.New(pool)
 
-	return conn, nil
+	return pool, nil
 }

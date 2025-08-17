@@ -1,10 +1,11 @@
-package helper
+package helpers
 
 import (
 	"bytes"
 	"fmt"
 	"html/template"
 	"log"
+	"strconv"
 
 	"github.com/resend/resend-go/v2"
 
@@ -27,7 +28,8 @@ func renderOTPEmailBody(otp string) (string, error) {
 
 	var renderedTemplate bytes.Buffer
 	if err := tmpl.Execute(&renderedTemplate, map[string]string{
-		"OTP": otp,
+		"OTP":       otp,
+		"ExpiresIn": strconv.Itoa(config.ConfigData.OTP_VALIDITY_MINUTES),
 	}); err != nil {
 		return "", err
 	}

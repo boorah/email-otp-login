@@ -75,7 +75,7 @@
 
         <div style="text-align: center; margin-top: 24px">
           <p style="font-size: 14px; color: #475569">
-            This code will expire in <strong>10 minutes</strong>.
+            This code will expire in <strong>{{.ExpiresIn}}</strong> minutes.
           </p>
           <p style="font-size: 13px; color: #64748b">
             If you didn't request this code, you can safely ignore this email.
@@ -99,11 +99,6 @@
           Please do not reply to this email.
         </p>
       </div>
-    </div>
-
-    <!-- Fallback preview for Gmail -->
-    <div style="text-align: center; margin-top: 24px">
-      <p style="font-size: 12px; color: #64748b">✨ Email Template Preview</p>
     </div>
   </body>
 </html>
