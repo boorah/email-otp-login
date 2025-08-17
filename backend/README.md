@@ -2,6 +2,20 @@
 
 A simple backend service in golang for implementing email otp based login
 
+## Running migrations
+
+- Add the env vars for `goose`
+
+```
+export $(cat .env | xargs)
+```
+
+- Run the migrations
+
+```
+goose up
+```
+
 ## Building the image
 
 ```
