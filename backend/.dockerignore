@@ -1,0 +1,35 @@
+# Go build output
+main
+*.out
+*.exe
+
+# Temporary files
+tmp/
+*.log
+*.tmp
+
+# IDE/editor files
+.vscode/
+.idea/
+*.swp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Version control
+.git
+.gitignore
+
+# Config files not needed in container
+.air.toml
+.env
+sqlc.yaml
+
+# Docker-related files (optional if building from a clean context)
+.dockerignore
+
+# Test cache & coverage
+*.test
+*.coverprofile
+coverage.out

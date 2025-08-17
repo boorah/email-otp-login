@@ -9,6 +9,7 @@ import (
 )
 
 type Config struct {
+	APP_ENV              string
 	PORT                 int
 	DB_HOST              string
 	DB_PORT              int
@@ -49,12 +50,18 @@ func getEnvValueInt(key string, defaultValue int) int {
 
 func LoadConfig() (*Config, error) {
 	// Load environment variables
-	if err := godotenv.Load(); err != nil {
-		return nil, fmt.Errorf("error loading .env file: %v", err)
+	appEnv := getEnvValue("APP_ENV")
+
+	// Load .env file only if the environment is local
+	if appEnv == "local" {
+		if err := godotenv.Load(); err != nil {
+			return nil, fmt.Errorf("error loading .env file: %v", err)
+		}
 	}
 
 	if ConfigData == nil {
 		ConfigData = &Config{
+			APP_ENV:              getEnvValue("APP_ENV"),
 			PORT:                 getEnvValueInt("PORT", 8080),
 			DB_HOST:              getEnvValue("DB_HOST"),
 			DB_PORT:              getEnvValueInt("DB_PORT", 5432),

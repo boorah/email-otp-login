@@ -49,7 +49,7 @@ func main() {
 	log.Println("Server running on http://localhost:8080")
 
 	server := &http.Server{
-		Addr:    fmt.Sprintf("localhost:%d", config.ConfigData.PORT),
+		Addr:    fmt.Sprintf("0.0.0.0:%d", config.ConfigData.PORT),
 		Handler: r,
 	}
 
