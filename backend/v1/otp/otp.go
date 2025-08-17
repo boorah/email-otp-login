@@ -148,14 +148,8 @@ func RegisterRoutes(r chi.Router) chi.Router {
 			return
 		}
 
-		log.Println("latest OTP for user:", userData.Email, "is", latestOTP.Otp)
-
 		// Check if the OTP is valid - not expired and isn't used
 		if latestOTP.Otp != payload.OTP || latestOTP.ExpiresAt.Time.Before(time.Now()) || latestOTP.UsedAt.Valid {
-			log.Println("invalid OTP for user:", userData.Email, latestOTP.Otp, "provided:", payload.OTP, latestOTP.Otp == payload.OTP)
-			log.Println("OTP expired or already used for user:", userData.Email, "expires at:", latestOTP.ExpiresAt.Time, "current time:", time.Now())
-			log.Println("used at:", latestOTP.UsedAt.Time)
-
 			helpers.RespondWithError(w, helpers.NewUnauthorizedError("Invalid OTP or OTP expired"))
 			return
 		}
@@ -170,7 +164,7 @@ func RegisterRoutes(r chi.Router) chi.Router {
 		}
 
 		// If valid, create a JWT token for the user
-		jwtToken, err := helpers.GenerateJWT(userData.ID, 30) // 30 minutes validity
+		jwtToken, err := helpers.GenerateJWT(userData.ID, config.ConfigData.JWT_VALIDITY_MINUTES)
 		if err != nil {
 			log.Println("error while generating JWT token:", err)
 

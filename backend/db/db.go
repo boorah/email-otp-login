@@ -15,7 +15,7 @@ var Queries *sqlcConfig.Queries
 func Connect(ctx context.Context) (*pgxpool.Pool, error) {
 	config := *config.ConfigData
 
-	connectionString := fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=%s", config.USERNAME, config.PASSWORD, config.HOST, config.PORT, config.DBNAME, config.SSLMode)
+	connectionString := fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=%s", config.DB_USERNAME, config.DB_PASSWORD, config.DB_HOST, config.DB_PORT, config.DB_NAME, config.SSL_MODE)
 
 	pool, err := pgxpool.New(ctx, connectionString)
 	if err != nil {

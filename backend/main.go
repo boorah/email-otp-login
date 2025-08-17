@@ -44,6 +44,9 @@ func main() {
 
 	log.Println("Server running on http://localhost:8080")
 
-	http.ListenAndServe(":8080", r)
+	err = http.ListenAndServe(fmt.Sprintf("localhost:%d", config.ConfigData.PORT), r)
+	if err != nil {
+		log.Fatalf("error starting server: %v", err)
+	}
 
 }

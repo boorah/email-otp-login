@@ -9,17 +9,19 @@ import (
 )
 
 type Config struct {
-	HOST                 string
 	PORT                 int
-	USERNAME             string
-	PASSWORD             string
-	DBNAME               string
-	SSLMode              string
+	DB_HOST              string
+	DB_PORT              int
+	DB_USERNAME          string
+	DB_PASSWORD          string
+	DB_NAME              string
+	SSL_MODE             string
 	RESEND_API_KEY       string
 	RESEND_FROM_NAME     string
 	RESEND_FROM_EMAIL    string
 	OTP_VALIDITY_MINUTES int
 	JWT_SECRET           string
+	JWT_VALIDITY_MINUTES int
 }
 
 var ConfigData *Config
@@ -53,17 +55,19 @@ func LoadConfig() (*Config, error) {
 
 	if ConfigData == nil {
 		ConfigData = &Config{
-			HOST:                 getEnvValue("DB_HOST"),
-			PORT:                 getEnvValueInt("DB_PORT", 5432),
-			USERNAME:             getEnvValue("DB_USERNAME"),
-			PASSWORD:             getEnvValue("DB_PASSWORD"),
-			DBNAME:               getEnvValue("DB_NAME"),
-			SSLMode:              getEnvValue("DB_SSLMODE"),
+			PORT:                 getEnvValueInt("PORT", 8080),
+			DB_HOST:              getEnvValue("DB_HOST"),
+			DB_PORT:              getEnvValueInt("DB_PORT", 5432),
+			DB_USERNAME:          getEnvValue("DB_USERNAME"),
+			DB_PASSWORD:          getEnvValue("DB_PASSWORD"),
+			DB_NAME:              getEnvValue("DB_NAME"),
+			SSL_MODE:             getEnvValue("DB_SSLMODE"),
 			RESEND_API_KEY:       getEnvValue("RESEND_API_KEY"),
 			RESEND_FROM_NAME:     getEnvValue("RESEND_FROM_NAME"),
 			RESEND_FROM_EMAIL:    getEnvValue("RESEND_FROM_EMAIL"),
 			OTP_VALIDITY_MINUTES: getEnvValueInt("OTP_VALIDITY_MINUTES", 10),
 			JWT_SECRET:           getEnvValue("JWT_SECRET"),
+			JWT_VALIDITY_MINUTES: getEnvValueInt("JWT_VALIDITY_MINUTES", 30),
 		}
 	}
 
